@@ -13,6 +13,16 @@ def get_db_connection():
         ssl_disabled=False,
     )
 
+def check_env_vars():
+    return {
+        "DB_HOST": "SET" if os.getenv("DB_HOST") else "NOT SET",
+        "DB_PORT": "SET" if os.getenv("DB_PORT") else "NOT SET",
+        "DB_USER": "SET" if os.getenv("DB_USER") else "NOT SET",
+        "DB_PASSWORD": "SET" if os.getenv("DB_PASSWORD") else "NOT SET",
+        "DB_NAME": "SET" if os.getenv("DB_NAME") else "NOT SET",
+        "OPENROUTER_API_KEY": "SET" if os.getenv("OPENROUTER_API_KEY") else "NOT SET",
+    }
+
 def init_tables():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -66,7 +76,10 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             if path == '/health':
-                self.send_json({"status": "ok", "db_host": os.getenv("DB_HOST", "not set")})
+                self.send_json({"status": "ok", "env_vars": check_env_vars()})
+            
+            elif path == '/env-check':
+                self.send_json(check_env_vars())
             
             elif path == '/test-db':
                 try:
