@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnalysisDoc - AI Document Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo"><i class="fas fa-file-alt"></i><span>AnalysisDoc</span></div>
+                <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
+                    <i class="fas fa-home"></i><span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-section="workspaces" onclick="showSection('workspaces')">
+                    <i class="fas fa-folder"></i><span>Workspaces</span>
+                </button>
+                <button class="nav-item" data-section="documents" onclick="showSection('documents')">
+                    <i class="fas fa-file-pdf"></i><span>Documents</span>
+                </button>
+                <button class="nav-item" data-section="analysis" onclick="showSection('analysis')">
+                    <i class="fas fa-search-plus"></i><span>Analysis</span>
+                </button>
+                <button class="nav-item" data-section="compare" onclick="showSection('compare')">
+                    <i class="fas fa-columns"></i><span>Compare</span>
+                </button>
+                <button class="nav-item" data-section="matrix" onclick="showSection('matrix')">
+                    <i class="fas fa-th"></i><span>Decision Matrix</span>
+                </button>
+                <button class="nav-item" data-section="qa" onclick="showSection('qa')">
+                    <i class="fas fa-comments"></i><span>Q&A</span>
+                </button>
+                <button class="nav-item" data-section="charts" onclick="showSection('charts')">
+                    <i class="fas fa-chart-bar"></i><span>Charts</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1 id="pageTitle" class="page-title">Dashboard</h1>
+                <button class="btn-icon" onclick="refreshData()"><i class="fas fa-sync-alt"></i></button>
+            </header>
+
+            <div class="content-area">
+                <!-- Dashboard -->
+                <section id="dashboardSection" class="section active">
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon bg-indigo-500"><i class="fas fa-folder"></i></div>
+                            <div class="stat-info"><span class="stat-value" id="statWorkspaces">0</span><span class="stat-label">Workspaces</span></div></div>
+                        <div class="stat-card"><div class="stat-icon bg-green-500"><i class="fas fa-file"></i></div>
+                            <div class="stat-info"><span class="stat-value" id="statDocuments">0</span><span class="stat-label">Documents</span></div></div>
+                        <div class="stat-card"><div class="stat-icon bg-purple-500"><i class="fas fa-brain"></i></div>
+                            <div class="stat-info"><span class="stat-value" id="statAnalyzed">0</span><span class="stat-label">Analyzed</span></div></div>
+                        <div class="stat-card"><div class="stat-icon bg-orange-500"><i class="fas fa-comment-dots"></i></div>
+                            <div class="stat-info"><span class="stat-value" id="statQuestions">0</span><span class="stat-label">Questions</span></div></div>
+                    </div>
+                    <div class="quick-actions">
+                        <h2>Quick Actions</h2>
+                        <div class="action-grid">
+                            <button class="action-card" onclick="showSection('documents'); showUploadModal()">
+                                <i class="fas fa-cloud-upload-alt"></i><span>Upload Document</span></button>
+                            <button class="action-card" onclick="showSection('workspaces'); showWorkspaceModal()">
+                                <i class="fas fa-folder-plus"></i><span>New Workspace</span></button>
+                            <button class="action-card" onclick="showSection('analysis')">
+                                <i class="fas fa-magic"></i><span>Analyze</span></button>
+                            <button class="action-card" onclick="showSection('qa')">
+                                <i class="fas fa-comments"></i><span>Ask Questions</span></button>
+                        </div>
+                    </div>
+                    <div class="recent-docs">
+                        <h2>Recent Documents</h2>
+                        <div id="recentDocuments" class="doc-list"></div>
+                    </div>
+                </section>
+
+                <!-- Workspaces -->
+                <section id="workspacesSection" class="section">
+                    <div class="section-header">
+                        <h2>Workspaces</h2>
+                        <button class="btn-primary" onclick="showWorkspaceModal()"><i class="fas fa-plus"></i> New Workspace</button>
+                    </div>
+                    <div id="workspacesList" class="documents-grid"></div>
+                </section>
+
+                <!-- Documents -->
+                <section id="documentsSection" class="section">
+                    <div class="section-header">
+                        <h2>Documents</h2>
+                        <button class="btn-primary" onclick="showUploadModal()"><i class="fas fa-upload"></i> Upload</button>
+                    </div>
+                    <div id="documentsList" class="documents-grid"></div>
+                </section>
+
+                <!-- Analysis -->
+                <section id="analysisSection" class="section">
+                    <div class="analysis-layout">
+                        <div class="analysis-left">
+                            <div class="panel">
+                                <h3>1. Select Document</h3>
+                                <div id="analysisDocList" class="doc-select-list"></div>
+                            </div>
+                            <div class="panel" id="analysisSuggestionsPanel" style="display:none;">
+                                <h3><i class="fas fa-lightbulb text-yellow-400"></i> AI Suggestions</h3>
+                                <div id="docSummaryBox" class="summary-box"></div>
+                                <div id="analysisSuggestions"></div>
+                            </div>
+                        </div>
+                        <div class="analysis-right">
+                            <div class="panel">
+                                <h3>2. What do you want to analyze? (optional)</h3>
+                                <input type="text" id="userIntent" class="intent-input" placeholder="e.g., financial review, risk assessment, compliance check...">
+                                <div id="intentSuggestions"></div>
+                                <div id="matchedAnalysis" class="matched-analysis"></div>
+                            </div>
+                            <button id="runAnalysisBtn" class="btn-primary btn-block btn-large" onclick="runAnalysis()" disabled>
+                                <i class="fas fa-magic"></i> Run Complete Analysis (All Types)
+                            </button>
+                            <div id="analysisResults" class="results-panel"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Compare -->
+                <section id="compareSection" class="section">
+                    <div class="compare-layout">
+                        <div class="panel">
+                            <h3>Select Documents to Compare</h3>
+                            <div id="compareDocList" class="doc-checkbox-grid"></div>
+                            <div id="compareSuggestions" class="suggestions-box"></div>
+                            <button id="runCompareBtn" class="btn-primary btn-block" onclick="runComparison()" disabled>
+                                <i class="fas fa-code-compare"></i> Compare Selected
+                            </button>
+                        </div>
+                        <div id="compareResults" class="results-panel"></div>
+                        <div class="panel">
+                            <h3><i class="fas fa-history"></i> Previous Comparisons</h3>
+                            <div id="compareHistory" class="history-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Decision Matrix -->
+                <section id="matrixSection" class="section">
+                    <div class="matrix-layout">
+                        <div class="panel">
+                            <h3>Decision Matrix Setup</h3>
+                            <div class="form-group">
+                                <label>Matrix Name</label>
+                                <input type="text" id="matrixName" placeholder="e.g., Vendor Selection">
+                            </div>
+                            <h4>Criteria</h4>
+                            <div id="criteriaList"></div>
+                            <button class="btn-sm" onclick="addCriterion()"><i class="fas fa-plus"></i> Add Criterion</button>
+                            <div id="matrixCriteriaSuggestions" class="suggestions-box"></div>
+                            <h4>Select Documents (Options)</h4>
+                            <div id="matrixDocList" class="doc-checkbox-grid"></div>
+                            <button id="runMatrixBtn" class="btn-primary btn-block" onclick="runDecisionMatrix()" disabled>
+                                <i class="fas fa-calculator"></i> Calculate Matrix
+                            </button>
+                        </div>
+                        <div id="matrixResults" class="results-panel"></div>
+                        <div class="panel">
+                            <h3><i class="fas fa-history"></i> Previous Matrices</h3>
+                            <div id="matrixHistory" class="history-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Q&A -->
+                <section id="qaSection" class="section">
+                    <div class="qa-layout">
+                        <div class="panel">
+                            <h3>Select Documents</h3>
+                            <div id="qaDocList" class="doc-checkbox-grid"></div>
+                            <div id="qaSuggestedQuestions" class="suggestions-box"></div>
+                        </div>
+                        <div class="qa-main">
+                            <div class="qa-input-box">
+                                <textarea id="questionInput" placeholder="Ask a question about your documents..." rows="3"></textarea>
+                                <button class="btn-primary" onclick="askQuestion()"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                            <div id="qaResults" class="results-panel"></div>
+                            <div class="panel">
+                                <h3><i class="fas fa-history"></i> Question History</h3>
+                                <div id="qaHistory" class="history-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts -->
+                <section id="chartsSection" class="section">
+                    <div class="charts-layout">
+                        <div class="panel">
+                            <h3>Select Document</h3>
+                            <div id="chartDocList" class="doc-select-list"></div>
+                            <div id="chartSuggestions" class="suggestions-box"></div>
+                            <div class="form-group">
+                                <label>Chart Type</label>
+                                <select id="chartTypeSelect">
+                                    <option value="bar">Bar Chart</option>
+                                    <option value="line">Line Chart</option>
+                                    <option value="pie">Pie Chart</option>
+                                    <option value="doughnut">Doughnut Chart</option>
+                                    <option value="radar">Radar Chart</option>
+                                    <option value="polarArea">Polar Area Chart</option>
+                                </select>
+                            </div>
+                            <button id="generateChartBtn" class="btn-primary btn-block" onclick="generateChart()" disabled>
+                                <i class="fas fa-chart-bar"></i> Generate Chart
+                            </button>
+                            <div class="panel mt-4">
+                                <h3><i class="fas fa-history"></i> Previous Charts</h3>
+                                <div id="chartHistory" class="history-list"></div>
+                            </div>
+                        </div>
+                        <div class="chart-display-area">
+                            <div id="chartContainer"><canvas id="chartCanvas"></canvas></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
+    <div id="uploadModal" class="modal">
+        <div class="modal-header"><h3>Upload Documents</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div id="uploadZone" class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop files here</p>
+                <span>PDF, DOCX, Images, TXT (Max 15MB)</span>
+            </div>
+            <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.png,.jpg,.jpeg,.txt,.md,.csv" hidden>
+            <div id="uploadFileList" class="upload-file-list"></div>
+            <div class="form-group mt-4">
+                <label>Add to Workspace (optional)</label>
+                <select id="uploadWorkspaceSelect"><option value="">No workspace</option></select>
+            </div>
+            <p class="upload-note"><i class="fas fa-magic"></i> Documents will be auto-analyzed for smart suggestions</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button id="uploadBtn" class="btn-primary" onclick="doUpload()" disabled><i class="fas fa-upload"></i> Upload & Analyze</button>
+        </div>
+    </div>
+
+    <!-- Workspace Modal -->
+    <div id="workspaceModal" class="modal">
+        <div class="modal-header"><h3>Create Workspace</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Workspace Name *</label>
+                <input type="text" id="workspaceName" placeholder="Enter workspace name">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="workspaceDesc" placeholder="Optional description" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="createWorkspace()"><i class="fas fa-folder-plus"></i> Create</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js?v=14"></script>
+</body>
+</html>
