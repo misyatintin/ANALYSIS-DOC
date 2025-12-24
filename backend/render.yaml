@@ -1,4 +1,3 @@
-# Render.com deployment configuration
 services:
   - type: web
     name: analysisdoc-api
@@ -6,13 +5,17 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: OPENROUTER_API_KEY
-        sync: false
       - key: DB_HOST
-        sync: false
+        value: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+      - key: DB_PORT
+        value: "4000"
       - key: DB_USER
-        sync: false
+        value: ZDgyMMC3Dgevt8t.root
       - key: DB_PASSWORD
-        sync: false
+        value: obRjHNoDGY9x4XoO
       - key: DB_NAME
-        sync: false
+        value: test
+      - key: OPENROUTER_API_KEY
+        value: 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
+      - key: PRODUCTION
+        value: "true"
