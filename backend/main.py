@@ -1,13 +1,12 @@
 """FastAPI backend - Full Featured Document Analysis API"""
 import json
 import io
+import os
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
-import database
-import openrouter_service
 
 app = FastAPI(title="Document Analysis API", version="2.0.0")
 
@@ -19,9 +18,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global flag for database status
+db_initialized = False
+db_error = None
+
 @app.on_event("startup")
 async def startup():
-    database.init_database()
+    global db_initialized, db_error
+    try:
+        import database
+        database.init_database()
+        db_initialized = True
+        print("Database initialized successfully!")
+    except Exception as e:
+        db_error = str(e)
+        print(f"Database initialization failed: {e}")
+
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "ok" if db_initialized else "error",
+        "db_initialized": db_initialized,
+        "db_error": db_error,
+        "env_vars": {
+            "DB_HOST": os.getenv("DB_HOST", "not set"),
+            "DB_PORT": os.getenv("DB_PORT", "not set"),
+            "DB_NAME": os.getenv("DB_NAME", "not set"),
+            "DB_USER": os.getenv("DB_USER", "not set")[:5] + "..." if os.getenv("DB_USER") else "not set",
+            "PRODUCTION": os.getenv("PRODUCTION", "not set"),
+        }
+    }
+
+# Import database module
+try:
+    import database
+    import openrouter_service
+except Exception as e:
+    print(f"Import error: {e}")
 
 # ============ MODELS ============
 
