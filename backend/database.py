@@ -1,51 +1,42 @@
 """Database connection and models for MySQL - Full Version with Workspaces"""
 import os
 import json
-import ssl
 import mysql.connector
-from mysql.connector import pooling
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Check if running in production (cloud)
-IS_PRODUCTION = os.getenv("VERCEL", False) or os.getenv("PRODUCTION", "").lower() == "true"
+IS_PRODUCTION = os.getenv("PRODUCTION", "").lower() == "true" or os.getenv("VERCEL", "")
+
+print(f"Production mode: {IS_PRODUCTION}")
+print(f"DB_HOST: {os.getenv('DB_HOST', 'not set')}")
 
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "database": os.getenv("DB_NAME", "analysis"),
     "user": os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", "new_password"),
+    "password": os.getenv("DB_PASSWORD", ""),
     "port": int(os.getenv("DB_PORT", "3306")),
+    "autocommit": True,
 }
 
 # Add SSL for cloud databases (TiDB, PlanetScale, etc.)
 if IS_PRODUCTION or os.getenv("DB_SSL", "").lower() == "true":
     DB_CONFIG["ssl_disabled"] = False
-    DB_CONFIG["ssl_verify_identity"] = True
-
-connection_pool = None
-
-def get_pool():
-    global connection_pool
-    if connection_pool is None:
-        try:
-            connection_pool = pooling.MySQLConnectionPool(pool_name="pool", pool_size=3, **DB_CONFIG)
-        except Exception as e:
-            print(f"Connection pool error: {e}")
-            # Fallback to single connection mode
-            return None
-    return connection_pool
 
 def get_connection():
-    pool = get_pool()
-    if pool:
-        return pool.get_connection()
-    # Fallback direct connection
-    return mysql.connector.connect(**DB_CONFIG)
+    """Get a database connection"""
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        return conn
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        raise
 
 def init_database():
     """Initialize database - creates tables only if they don't exist"""
+    print("Initializing database...")
     conn = get_connection()
     cursor = conn.cursor()
     
