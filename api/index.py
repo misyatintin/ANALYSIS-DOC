@@ -1,39 +1,35 @@
-"""Vercel Serverless Function - Minimal Test"""
-from fastapi import FastAPI
-import os
+from http.server import BaseHTTPRequestHandler
+import json
 
-app = FastAPI()
-
-@app.get("/")
-def root():
-    return {"message": "API Working!"}
-
-@app.get("/health")
-def health():
-    return {"status": "ok", "python": "working"}
-
-@app.get("/workspaces")
-def workspaces():
-    return []
-
-@app.get("/documents")
-def documents():
-    return []
-
-@app.get("/qa-history")
-def qa_history():
-    return []
-
-@app.get("/comparisons")
-def comparisons():
-    return []
-
-@app.get("/decision-matrices")
-def matrices():
-    return []
-
-@app.get("/charts/{doc_id}")
-def charts(doc_id: int):
-    return []
-
-handler = app
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        if self.path == '/health':
+            response = {"status": "ok"}
+        elif self.path == '/workspaces':
+            response = []
+        elif self.path == '/documents':
+            response = []
+        elif self.path.startswith('/qa-history'):
+            response = []
+        elif self.path == '/comparisons':
+            response = []
+        elif self.path == '/decision-matrices':
+            response = []
+        elif self.path.startswith('/charts'):
+            response = []
+        else:
+            response = {"message": "AnalysisDoc API"}
+        
+        self.wfile.write(json.dumps(response).encode())
+    
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', '*')
+        self.end_headers()

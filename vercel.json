@@ -1,29 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "frontend/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    { "src": "/health", "dest": "/api/index.py" },
-    { "src": "/test-db", "dest": "/api/index.py" },
-    { "src": "/upload", "dest": "/api/index.py" },
-    { "src": "/documents(.*)", "dest": "/api/index.py" },
-    { "src": "/workspaces(.*)", "dest": "/api/index.py" },
-    { "src": "/analyze(.*)", "dest": "/api/index.py" },
-    { "src": "/compare(.*)", "dest": "/api/index.py" },
-    { "src": "/decision-matrix(.*)", "dest": "/api/index.py" },
-    { "src": "/qa(.*)", "dest": "/api/index.py" },
-    { "src": "/charts(.*)", "dest": "/api/index.py" },
-    { "src": "/analysis(.*)", "dest": "/api/index.py" },
-    { "src": "/comparisons(.*)", "dest": "/api/index.py" },
-    { "src": "/decision-matrices(.*)", "dest": "/api/index.py" },
-    { "src": "/(.*)", "dest": "/frontend/$1" }
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/workspaces", "destination": "/api/index" },
+    { "source": "/documents", "destination": "/api/index" },
+    { "source": "/qa-history", "destination": "/api/index" },
+    { "source": "/comparisons", "destination": "/api/index" },
+    { "source": "/decision-matrices", "destination": "/api/index" },
+    { "source": "/charts/:path*", "destination": "/api/index" }
   ]
 }
