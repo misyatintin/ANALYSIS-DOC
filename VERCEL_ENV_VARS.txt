@@ -1,0 +1,22 @@
+============================================
+COPY THESE TO VERCEL ENVIRONMENT VARIABLES
+============================================
+
+Go to: https://vercel.com → Your Project → Settings → Environment Variables
+
+Add each of these (Name = Value):
+
+DB_HOST = gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+DB_PORT = 4000
+DB_USER = ZDgyMMC3Dgevt8t.root
+DB_PASSWORD = obRjHNoDGY9x4XoO
+DB_NAME = test
+OPENROUTER_API_KEY = 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
+PRODUCTION = true
+
+============================================
+AFTER ADDING ALL VARIABLES:
+1. Click "Save"
+2. Go to "Deployments" tab
+3. Click ⋮ on latest deployment → "Redeploy"
+============================================

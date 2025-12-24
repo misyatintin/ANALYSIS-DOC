@@ -1,4 +1,6 @@
 {
+  "buildCommand": "",
+  "outputDirectory": "frontend",
   "rewrites": [
     { "source": "/health", "destination": "/api/index" },
     { "source": "/test-db", "destination": "/api/index" },
