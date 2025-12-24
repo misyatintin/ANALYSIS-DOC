@@ -1,11 +1,22 @@
 {
   "rewrites": [
     { "source": "/health", "destination": "/api/index" },
+    { "source": "/test-db", "destination": "/api/index" },
+    { "source": "/init-db", "destination": "/api/index" },
     { "source": "/workspaces", "destination": "/api/index" },
+    { "source": "/workspaces/:path*", "destination": "/api/index" },
     { "source": "/documents", "destination": "/api/index" },
-    { "source": "/qa-history", "destination": "/api/index" },
+    { "source": "/documents/:path*", "destination": "/api/index" },
+    { "source": "/upload", "destination": "/api/index" },
+    { "source": "/analyze", "destination": "/api/index" },
+    { "source": "/analysis/:path*", "destination": "/api/index" },
+    { "source": "/compare", "destination": "/api/index" },
     { "source": "/comparisons", "destination": "/api/index" },
+    { "source": "/decision-matrix", "destination": "/api/index" },
     { "source": "/decision-matrices", "destination": "/api/index" },
+    { "source": "/qa", "destination": "/api/index" },
+    { "source": "/qa-history", "destination": "/api/index" },
+    { "source": "/charts", "destination": "/api/index" },
     { "source": "/charts/:path*", "destination": "/api/index" }
   ]
 }
