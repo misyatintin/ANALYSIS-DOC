@@ -1,5 +1,8 @@
 // ============ Config & State ============
-const API_URL = 'http://localhost:8000';
+// Auto-detect API URL based on environment
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : '';
 const state = {
     documents: [],
     workspaces: [],

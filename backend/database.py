@@ -1,6 +1,7 @@
 """Database connection and models for MySQL - Full Version with Workspaces"""
 import os
 import json
+import ssl
 import mysql.connector
 from mysql.connector import pooling
 from dotenv import load_dotenv
@@ -8,19 +9,20 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Check if running in production (cloud)
-IS_PRODUCTION = os.getenv("RENDER", False) or os.getenv("VERCEL", False) or os.getenv("PRODUCTION", False)
+IS_PRODUCTION = os.getenv("VERCEL", False) or os.getenv("PRODUCTION", "").lower() == "true"
 
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "database": os.getenv("DB_NAME", "analysis"),
     "user": os.getenv("DB_USER", "root"),
     "password": os.getenv("DB_PASSWORD", "new_password"),
+    "port": int(os.getenv("DB_PORT", "3306")),
 }
 
-# Add SSL for cloud databases (PlanetScale, TiDB, etc.)
+# Add SSL for cloud databases (TiDB, PlanetScale, etc.)
 if IS_PRODUCTION or os.getenv("DB_SSL", "").lower() == "true":
-    DB_CONFIG["ssl_ca"] = "/etc/ssl/certs/ca-certificates.crt"
-    DB_CONFIG["ssl_verify_cert"] = True
+    DB_CONFIG["ssl_disabled"] = False
+    DB_CONFIG["ssl_verify_identity"] = True
 
 connection_pool = None
 
