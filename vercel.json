@@ -3,64 +3,27 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
+      "use": "@vercel/python"
     },
     {
-      "src": "frontend/**",
+      "src": "frontend/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/upload",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/documents(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/workspaces(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/analyze(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/compare(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/decision-matrix(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/qa(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/charts(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/analysis(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/comparisons(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/(.*\\.(js|css|ico|png|jpg|svg))",
-      "dest": "/frontend/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/index.html"
-    }
+    { "src": "/health", "dest": "/api/index.py" },
+    { "src": "/test-db", "dest": "/api/index.py" },
+    { "src": "/upload", "dest": "/api/index.py" },
+    { "src": "/documents(.*)", "dest": "/api/index.py" },
+    { "src": "/workspaces(.*)", "dest": "/api/index.py" },
+    { "src": "/analyze(.*)", "dest": "/api/index.py" },
+    { "src": "/compare(.*)", "dest": "/api/index.py" },
+    { "src": "/decision-matrix(.*)", "dest": "/api/index.py" },
+    { "src": "/qa(.*)", "dest": "/api/index.py" },
+    { "src": "/charts(.*)", "dest": "/api/index.py" },
+    { "src": "/analysis(.*)", "dest": "/api/index.py" },
+    { "src": "/comparisons(.*)", "dest": "/api/index.py" },
+    { "src": "/decision-matrices(.*)", "dest": "/api/index.py" },
+    { "src": "/(.*)", "dest": "/frontend/$1" }
   ]
 }
