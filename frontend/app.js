@@ -2,7 +2,7 @@
 // Auto-detect API URL based on environment
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:8000' 
-    : '';
+    : 'https://analysisdoc-api-production.up.railway.app';
 const state = {
     documents: [],
     workspaces: [],
