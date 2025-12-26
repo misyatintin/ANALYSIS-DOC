@@ -152,7 +152,7 @@ def get_workspaces():
     cursor.execute("""
         SELECT w.*, COUNT(d.id) as document_count 
         FROM workspaces w LEFT JOIN documents d ON w.id = d.workspace_id 
-        GROUP BY w.id ORDER BY w.updated_at DESC
+        GROUP BY w.id ORDER BY w.created_at DESC
     """)
     results = cursor.fetchall()
     cursor.close()
